@@ -6,9 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository <User, Long >{
-    Optional<User> findByUsername(String username);
-    List<User> findByAllUser(String username);
+public interface UserRepository extends JpaRepository <User, UUID>{
 }

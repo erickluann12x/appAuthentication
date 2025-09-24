@@ -1,34 +1,72 @@
 package br.appAuth.appAuthentication.service;
 
-import br.appAuth.appAuthentication.exceptions.ResourceNotFoundException;
+import br.appAuth.appAuthentication.Controller.CreateUserDto;
+import br.appAuth.appAuthentication.Controller.UpdateUserDto;
 import br.appAuth.appAuthentication.model.User;
 import br.appAuth.appAuthentication.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public User registerUser(String username,String email ,String password) {
-        String passwordCript = passwordEncoder.encode(password);
-        User user = new User(username,email,passwordCript);
-        return userRepository.save(user);
+    public UUID registerUser(CreateUserDto createUserDto) {
+        var entity = new User(
+                UUID.randomUUID(),
+                createUserDto.username(),
+                createUserDto.email(),
+                createUserDto.password(),
+                Instant.now(),
+                null);
 
+
+        var userSaved = userRepository.save(entity);
+        return userSaved.getUserId();
     }
-    public User findByUsername(String username){
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario "+username+"não encontrado"));
+
+    public Optional <User> getUserById(String userId) {
+        return userRepository.findById(UUID.fromString(userId));
     }
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario nao encontrado com id"));
+
+    public List<User> listUsers() {
+        return userRepository.findAll();
     }
+
+    public void updateUserById(String userId, UpdateUserDto updateUserDto) {
+        var id = UUID.fromString(userId);
+
+        var userEntity = userRepository.findById(id);
+
+        if (userEntity.isPresent()) {
+            var user = userEntity.get();
+            if (updateUserDto.username() !=null ) {
+                user.setUsername(updateUserDto.username());
+            }
+            if (updateUserDto.password() != null) {
+                user.setPassword(updateUserDto.password());
+            }
+
+            userRepository.save(user);
+        }
+    }
+
+    public void deleteById(String userId) {
+        var id = UUID.fromString(userId);
+
+        var userExists = userRepository.existsById(id);
+
+        if (userExists) {
+            userRepository.deleteById(id);
+        }
+    }
+
 }
