@@ -1,6 +1,6 @@
 package br.appAuth.appAuthentication.Controller;
 
-import br.appAuth.appAuthentication.model.User;
+import br.appAuth.appAuthentication.entities.User;
 import br.appAuth.appAuthentication.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

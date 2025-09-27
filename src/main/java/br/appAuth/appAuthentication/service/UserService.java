@@ -2,8 +2,9 @@ package br.appAuth.appAuthentication.service;
 
 import br.appAuth.appAuthentication.Controller.CreateUserDto;
 import br.appAuth.appAuthentication.Controller.UpdateUserDto;
-import br.appAuth.appAuthentication.model.User;
+import br.appAuth.appAuthentication.entities.User;
 import br.appAuth.appAuthentication.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -14,17 +15,22 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UUID registerUser(CreateUserDto createUserDto) {
+
+        var passwordHash = passwordEncoder.encode(createUserDto.password());
+
         var entity = new User(
                 UUID.randomUUID(),
                 createUserDto.username(),
                 createUserDto.email(),
-                createUserDto.password(),
+                passwordHash,
                 Instant.now(),
                 null);
 
