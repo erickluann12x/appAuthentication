@@ -4,6 +4,7 @@ import br.appAuth.appAuthentication.dto.request.LoginRequest;
 import br.appAuth.appAuthentication.dto.request.ResgisterUserRequest;
 import br.appAuth.appAuthentication.dto.response.LoginResponse;
 import br.appAuth.appAuthentication.dto.response.RegisterUserResponse;
+import br.appAuth.appAuthentication.entities.Role;
 import br.appAuth.appAuthentication.entities.User;
 import br.appAuth.appAuthentication.repository.UserRepository;
 import br.appAuth.appAuthentication.service.TokenService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
@@ -52,9 +54,15 @@ public class AuthenticationController {
     @PostMapping("/create")
     public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody ResgisterUserRequest request) {
         User newUser = new User();
-        newUser.setPassword(passwordEncoder.encode(request.password()));
-        newUser.setEmail(request.email());
         newUser.setName(request.name());
+        newUser.setEmail(request.email());
+        newUser.setPassword(passwordEncoder.encode(request.password()));
+
+        if (request.role() != null){
+            newUser.setRoles(Set.of(request.role()));
+        } else {
+            newUser.setRoles(Set.of(Role.ROLE_USER));
+        }
 
         userRepository.save(newUser);
 

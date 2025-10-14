@@ -26,6 +26,7 @@ public class TokenService {
     Algorithm algorithm = Algorithm.HMAC256(secret);
     return JWT.create()
             .withClaim("userId", user.getId())
+            .withClaim("roles", user.getRoles().stream().map(Enum::name).toList())
             .withSubject(user.getEmail())
             .withExpiresAt(Instant.now().plusSeconds(86400))
             .withIssuedAt(Instant.now())
@@ -42,6 +43,7 @@ public class TokenService {
             return Optional.of(JWTUserData.builder()
                     .userid(decode.getClaim("userId").asLong())
                     .email(decode.getSubject())
+                    .roles(decode.getClaim("roles").asList(String.class))
                     .build());
 
         } catch (JWTVerificationException ex) {
