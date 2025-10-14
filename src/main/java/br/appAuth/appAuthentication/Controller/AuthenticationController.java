@@ -1,38 +1,65 @@
 package br.appAuth.appAuthentication.Controller;
 
+import br.appAuth.appAuthentication.dto.request.LoginRequest;
+import br.appAuth.appAuthentication.dto.request.ResgisterUserRequest;
+import br.appAuth.appAuthentication.dto.response.LoginResponse;
+import br.appAuth.appAuthentication.dto.response.RegisterUserResponse;
 import br.appAuth.appAuthentication.entities.User;
 import br.appAuth.appAuthentication.repository.UserRepository;
 import br.appAuth.appAuthentication.service.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserRepository repository;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TokenService tokenService;
+
+    public AuthenticationController(UserRepository userRepository, TokenService tokenService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Validated AuthenticationDTO data){
-        var userNamePassword = new UsernamePasswordAuthenticationToken(data.username(),data.password());
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request){
+        var userNamePassword = new UsernamePasswordAuthenticationToken(request.email(),request.password());
         var auth = this.authenticationManager.authenticate(userNamePassword);
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+        User user = (User) auth.getPrincipal();
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new LoginResponse(token));
+    }
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+    @PostMapping("/create")
+    public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody ResgisterUserRequest request) {
+        User newUser = new User();
+        newUser.setPassword(passwordEncoder.encode(request.password()));
+        newUser.setEmail(request.email());
+        newUser.setName(request.name());
+
+        userRepository.save(newUser);
+
+
+        String token = this.tokenService.generateToken(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUserResponse(newUser.getUsername(), newUser.getEmail()));
     }
 }
