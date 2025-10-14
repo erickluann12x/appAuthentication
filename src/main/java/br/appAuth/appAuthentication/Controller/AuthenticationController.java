@@ -52,9 +52,9 @@ public class AuthenticationController {
     @PostMapping("/create")
     public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody ResgisterUserRequest request) {
         User newUser = new User();
-        newUser.setPassword(passwordEncoder.encode(request.password()));
-        newUser.setEmail(request.email());
         newUser.setName(request.name());
+        newUser.setEmail(request.email());
+        newUser.setPassword(passwordEncoder.encode(request.password()));
 
         userRepository.save(newUser);
 
