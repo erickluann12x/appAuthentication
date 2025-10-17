@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/test")
-public class TestController {
+@RequestMapping("/admin")
+public class AdminController {
 
-    @GetMapping
-    public String test(){
-        return "Token validado com sucesso";
+    @GetMapping("/panel")
+    public String adminPanel(){
+        return "Administrador autenticado";
     }
 }
