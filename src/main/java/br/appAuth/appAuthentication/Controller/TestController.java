@@ -10,6 +10,6 @@ public class TestController {
 
     @GetMapping
     public String test(){
-        return "Testando Segurença";
+        return "Token validado com sucesso";
     }
 }
