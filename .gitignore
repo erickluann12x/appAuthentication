@@ -1,70 +1,38 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+  # AWS CLI e credenciais
+  .aws/
+  *.awscredentials
+  aws.env
+  application-aws.properties
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+  # Secrets em geral
+  secrets.json
+  secrets.yml
+  credentials.json
+  *.key
+  *.pem
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+  # Arquivos de ambiente
+  .env
+  .env.local
+  .env.*.local
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+  # IntelliJ IDEA
+  .idea/
+  *.iml
+  *.iws
+  out/
 
-### VS Code ###
-.vscode/
+  # Java / Maven / Spring Boot
+  target/
+  *.class
+  *.log
+  logs/
+  application-local.properties
+  application-*.local.properties
 
-# AWS CLI e credenciais
-.aws/
-*.awscredentials
-aws.env
-application-aws.properties
+  # Arquivos temporários
+  *.tmp
+  *.swp
+  *~
 
-# Secrets em geral
-secrets.json
-secrets.yml
-credentials.json
-*.key
-*.pem
-
-# Arquivos de ambiente
-.env
-.env.local
-.env.*.local
-
-# IntelliJ IDEA
-.idea/
-*.iml
-*.iws
-out/
-
-# Java / Maven / Spring Boot
-target/
-*.class
-*.log
-logs/
-application-local.properties
-application-*.local.properties
-
-# Arquivos temporários
-*.tmp
-*.swp
-*~
+  echo "src/main/resources/application.properties" >> .gitignore
