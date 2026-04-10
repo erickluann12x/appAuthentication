@@ -1,13 +1,12 @@
 
- # IntelliJ IDEA
+# IntelliJ IDEA
 .idea/
 *.iml
 *.iws
 out/
 
-  # Java / Maven / Spring Boot
-target/
+# Java / Maven / Spring Boot
 *.class
 *.log
-
+target/
 application.properties
