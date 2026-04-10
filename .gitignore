@@ -10,5 +10,4 @@ target/
 *.class
 *.log
 
-.env
 application.properties
